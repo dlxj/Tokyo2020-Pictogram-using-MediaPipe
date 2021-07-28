@@ -97,7 +97,7 @@ class Tokyo2020PictogramVideoProcessor(VideoProcessorBase):
 def main():
     with st.beta_expander("Model parameters (there parameters are effective only at initialization)"):
         static_image_mode = st.checkbox("Static image mode")
-        model_complexity = st.radio("Model complexity", [0, 1, 2], index=1)
+        model_complexity = st.radio("Model complexity", [0, 1, 2], index=0)
         min_detection_confidence = st.slider("Min detection confidence", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
         min_tracking_confidence = st.slider("Min tracking confidence", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
 
