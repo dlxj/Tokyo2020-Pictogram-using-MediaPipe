@@ -115,6 +115,7 @@ def main():
             media_stream_constraints={"video": True, "audio": False},
         ),
         video_processor_factory=processor_factory,
+        async_transform=True,
     )
     st.session_state["started"] = webrtc_ctx.state.playing
 
