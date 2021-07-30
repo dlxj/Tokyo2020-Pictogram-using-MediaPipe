@@ -166,7 +166,15 @@ def main():
     show_fps = st.checkbox("Show FPS", value=True)
 
     def processor_factory():
-        return Tokyo2020PictogramVideoProcessor(static_image_mode=static_image_mode, model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, rev_color=rev_color, display_mode=display_mode, show_fps=show_fps)
+        return Tokyo2020PictogramVideoProcessor(
+            static_image_mode=static_image_mode,
+            model_complexity=model_complexity,
+            min_detection_confidence=min_detection_confidence,
+            min_tracking_confidence=min_tracking_confidence,
+            rev_color=rev_color,
+            display_mode=display_mode,
+            show_fps=show_fps
+        )
 
     webrtc_ctx = webrtc_streamer(
         key="tokyo2020-Pictogram",
@@ -183,6 +191,7 @@ def main():
         webrtc_ctx.video_processor.rev_color = rev_color
         webrtc_ctx.video_processor.display_mode = display_mode
         webrtc_ctx.video_processor.show_fps = show_fps
+
 
 if __name__ == "__main__":
     main()
