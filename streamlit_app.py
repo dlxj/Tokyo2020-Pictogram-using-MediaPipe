@@ -56,7 +56,10 @@ class Tokyo2020PictogramVideoProcessor(VideoProcessorBase):
     def __init__(self, static_image_mode,
                     model_complexity,
                     min_detection_confidence,
-                    min_tracking_confidence,rev_color,display_mode) -> None:
+                    min_tracking_confidence,
+                    rev_color,
+                    display_mode,
+                    show_fps) -> None:
         self._in_queue = Queue()
         self._out_queue = Queue()
         self._pose_process = Process(target=pose_process, kwargs={
@@ -71,6 +74,7 @@ class Tokyo2020PictogramVideoProcessor(VideoProcessorBase):
 
         self.rev_color = rev_color
         self.display_mode = display_mode
+        self.show_fps = show_fps
 
         self._pose_process.start()
 
@@ -123,10 +127,11 @@ class Tokyo2020PictogramVideoProcessor(VideoProcessorBase):
                 bg_color=bg_color,
             )
 
-        cv.putText(debug_image01, "FPS:" + str(display_fps), (10, 30),
-                   cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
-        cv.putText(debug_image02, "FPS:" + str(display_fps), (10, 30),
-                   cv.FONT_HERSHEY_SIMPLEX, 1.0, color, 2, cv.LINE_AA)
+        if self.show_fps:
+            cv.putText(debug_image01, "FPS:" + str(display_fps), (10, 30),
+                    cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
+            cv.putText(debug_image02, "FPS:" + str(display_fps), (10, 30),
+                    cv.FONT_HERSHEY_SIMPLEX, 1.0, color, 2, cv.LINE_AA)
 
         if self.display_mode == "Pose":
             return av.VideoFrame.from_ndarray(debug_image01, format="bgr24")
@@ -158,9 +163,10 @@ def main():
 
     rev_color = st.checkbox("Reverse color")
     display_mode = st.radio("Display mode", ["Pictogram", "Pose", "Both"], index=0)
+    show_fps = st.checkbox("Show FPS", value=True)
 
     def processor_factory():
-        return Tokyo2020PictogramVideoProcessor(static_image_mode=static_image_mode, model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, rev_color=rev_color, display_mode=display_mode)
+        return Tokyo2020PictogramVideoProcessor(static_image_mode=static_image_mode, model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, rev_color=rev_color, display_mode=display_mode, show_fps=show_fps)
 
     webrtc_ctx = webrtc_streamer(
         key="tokyo2020-Pictogram",
@@ -176,6 +182,7 @@ def main():
     if webrtc_ctx.video_processor:
         webrtc_ctx.video_processor.rev_color = rev_color
         webrtc_ctx.video_processor.display_mode = display_mode
+        webrtc_ctx.video_processor.show_fps = show_fps
 
 if __name__ == "__main__":
     main()
