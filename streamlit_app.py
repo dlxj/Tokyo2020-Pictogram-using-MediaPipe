@@ -15,6 +15,8 @@ from main import draw_landmarks, draw_stick_figure
 
 from fake_objects import FakeResultObject, FakeLandmarksObject, FakeLandmarkObject
 
+from turn import get_ice_servers
+
 
 _SENTINEL_ = "_SENTINEL_"
 
@@ -179,10 +181,8 @@ def main():
     webrtc_ctx = webrtc_streamer(
         key="tokyo2020-Pictogram",
         mode=WebRtcMode.SENDRECV,
-        client_settings=ClientSettings(
-            rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
-            media_stream_constraints={"video": True, "audio": False},
-        ),
+        rtc_configuration={"iceServers": get_ice_servers()},
+        media_stream_constraints={"video": True, "audio": False},
         video_processor_factory=processor_factory,
     )
     st.session_state["started"] = webrtc_ctx.state.playing
