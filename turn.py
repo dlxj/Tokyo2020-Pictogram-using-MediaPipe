@@ -2,12 +2,12 @@ import logging
 import os
 
 import streamlit as st
+from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
 logger = logging.getLogger(__name__)
 
 
-@st.cache_data  # type: ignore
 def get_ice_servers():
     """Use Twilio's TURN server because Streamlit Community Cloud has changed
     its infrastructure and WebRTC connection cannot be established without TURN server now.  # noqa: E501
@@ -28,6 +28,12 @@ def get_ice_servers():
 
     client = Client(account_sid, auth_token)
 
-    token = client.tokens.create()
+    try:
+        token = client.tokens.create()
+    except TwilioRestException as e:
+        st.warning(
+            f"Error occurred while accessing Twilio API. Fallback to a free STUN server from Google. ({e})"  # noqa: E501
+        )
+        return [{"urls": ["stun:stun.l.google.com:19302"]}]
 
     return token.ice_servers
